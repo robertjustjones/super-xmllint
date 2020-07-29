@@ -7,13 +7,13 @@ import * as child_process from 'child_process'
  *
  * The exit code of xmllint informs us whether the xml was valid or not
  */
-export interface xmllinto_output {
+export interface xmllint_output {
   code: number,
   command: string,
   output: string
 }
 
-const exec_xmllint = (input: string | Buffer, command: string): Promise<xmllinto_output> =>
+const exec_xmllint = (input: string | Buffer, command: string): Promise<xmllint_output> =>
 	new Promise((resolve, reject) => {
 		const xmllint = child_process.spawn(command, { shell: true })
 
