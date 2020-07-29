@@ -10,10 +10,10 @@ Fork from project [validate-with-xmllint](https://github.com/aautio/validate-wit
 
 ## Features
 
-- Validate schemaless XML file 👉 `function validateXML(input: string | Buffer, output: Boolean = false): Promise<xmllintOutput>`
-- Validate with DTDs 👉 `function validateXMLWithDTD(input: string | Buffer, output: Boolean = false): Promise<xmllintOutput>`
-- Validate with XML Schemas (XSD) 👉 `function validateXMLWithXSD(input: string | Buffer, xsdfile: string | Buffer, output: Boolean = false): Promise<void>`
-- Canonicalize XML with c14n, c14n11 or exc-c14n 👉 `function canonicalizeXML(input: string | Buffer, method: 'c14n' | 'c14n11' | 'exc-c14n' = 'exc-c14n', output: Boolean = false): Promise<xmllintOutput>`
+- Validate schemaless XML file 👉 `function validateXML(input: string | Buffer): Promise<xmllintOutput>`
+- Validate with DTDs 👉 `function validateXMLWithDTD(input: string | Buffer): Promise<xmllintOutput>`
+- Validate with XML Schemas (XSD) 👉 `function validateXMLWithXSD(input: string | Buffer, xsdfile: string | Buffer): Promise<void>`
+- Canonicalize XML with c14n, c14n11 or exc-c14n 👉 `function canonicalizeXML(input: string | Buffer, method: 'c14n' | 'c14n11' | 'exc-c14n' = 'exc-c14n'): Promise<xmllintOutput>`
 - Written in TypeScript
 - Tests with good coverage included
 - Zero NPM dependencies

@@ -63,41 +63,35 @@ const exec_xmllint = (input: string | Buffer, command: string): Promise<xmllint_
  * Validate XML without any DTD or schema.
  *
  * @param input XML
- * @param output Print output to stdout, defaults to false
  */
-export const validateXML = (input: string | Buffer, output: Boolean = false) =>
-	exec_xmllint(input, `xmllint --nonet ${output ? '' : '--noout'} -`)
+export const validateXML = (input: string | Buffer) =>
+	exec_xmllint(input, 'xmllint --nonet -')
 
 /**
  * Validate XML with DTD.
  *
  * @param input XML
- * @param output Print output to stdout, defaults to false
  */
-export const validateXMLWithDTD = (input: string | Buffer, output: Boolean = false) =>
-	exec_xmllint(input, `xmllint --valid --nonet ${output ? '' : '--noout'} -`)
+export const validateXMLWithDTD = (input: string | Buffer) =>
+	exec_xmllint(input, 'xmllint --valid --nonet -')
 
 /**
  * Save in W3C exclusive canonical format (with comments)
  *
  * @param input XML
  * @param method Used canonicalization method, defaults to Exclusive C14N
- * @param output Print output to stdout, defaults to false
  */
 export const canonicalizeXML = (
 	input: string | Buffer, 
-	method: 'c14n' | 'c14n11' | 'exc-c14n' = 'exc-c14n',
-	output: Boolean = false
-) => exec_xmllint(input, `xmllint --${method} ${output ? '' : '--noout'} -`)
+	method: 'c14n' | 'c14n11' | 'exc-c14n' = 'exc-c14n'
+) => exec_xmllint(input, `xmllint --${method} --nonet -`)
 
 /**
  * Validate XML with the provided XML schema file.
  * @param input XML
  * @param xsdfile Path to XSD
- * @param output Print output to stdout, defaults to false
  */
 export const validateXMLWithXSD = (
 	input: string | Buffer,
-	xsdfile: string | Buffer,
-	output: Boolean = false
-) => exec_xmllint(input, `xmllint --schema ${xsdfile} --nonet ${output ? '' : '--noout'} -`)
+	xsdfile: string | Buffer
+) => exec_xmllint(input, `xmllint --schema ${xsdfile} --nonet -`)
