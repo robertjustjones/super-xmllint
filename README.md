@@ -1,8 +1,12 @@
-# validate-with-xmllint
+# super-xmllint
 
 [![npm package][npm-badge]][npm]
 
-Wrapper for `xmllint`. Easy validation of XML. XML Schemas and DTDs supported. c14n and c14n-exc canoncalization Zero dependencies.
+Wrapper for `xmllint`. Easy validation of XML. XML Schemas and DTDs supported. c14n and c14n-exc canoncalization.
+
+### Zero dependencies.
+
+Fork from project [validate-with-xmllint](https://github.com/aautio/validate-with-xmllint)
 
 ## Features
 
@@ -121,5 +125,5 @@ Error: xmllint exited with code 3 when executed with xmllint --schema /Users/aau
 - fails to validate
 ```
 
-[npm-badge]: https://img.shields.io/npm/v/validate-with-xmllint.svg
-[npm]: https://www.npmjs.org/package/validate-with-xmllint
+[npm-badge]: https://img.shields.io/npm/v/super-xmlllint.svg
+[npm]: https://www.npmjs.org/package/super-xmlllint
