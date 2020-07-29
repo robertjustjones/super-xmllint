@@ -8,7 +8,7 @@ const { spawnSync } = require('child_process')
  */
 if (spawnSync('xmllint --version', { shell: true }).status !== 0) {
 	throw new Error(
-		'Failed to validate xmlasdasdasdlint installation. All xml validations will fail.'
+		'Failed to validate xmllint installation. All xml validations will fail.'
 	)
 } else {
 	console.log('xmllint has been located. Ready to validate xml.')

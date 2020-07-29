@@ -1,12 +1,14 @@
 import * as child_process from 'child_process'
+import {
+	ValidationError,
+	DTDError,
+	SchemaCompilationError,
+	WriteOutputError,
+	PatternError,
+	ReaderRegistrationError,
+	OutOfMemoryError	
+} from './errors'
 
-/**
- * xmllint should not write anything to stdout nor stderr when validating.
- *
- * Thus any output is considered an error and will reject the promise.
- *
- * The exit code of xmllint informs us whether the xml was valid or not
- */
 export interface xmllint_output {
   code: number,
   command: string,
@@ -26,14 +28,31 @@ const exec_xmllint = (input: string | Buffer, command: string): Promise<xmllint_
 		xmllint.on('error', reject)
 
 		xmllint.on('close', code => {
-			if (code === 0) {
+			/** See xmllint man page for more information about these codes */
+			const errorMessage = `xmllint exited with code ${code} when executed with ${command}:\n${output}`
+			
+			switch (code) {
+			case 0:
 				return resolve({ code, command, output })
+			case 2:
+				return reject(new DTDError(errorMessage))
+			case 3:
+			case 4:
+				return reject(new ValidationError(errorMessage))
+			case 5:
+				return reject(new SchemaCompilationError(errorMessage))
+			case 6:
+				return reject(new WriteOutputError(errorMessage))
+			case 7:
+				return reject(new PatternError(errorMessage))
+			case 8:
+				return reject(new ReaderRegistrationError(errorMessage))
+			case 9:
+				return reject(new OutOfMemoryError(errorMessage))
+			case 1:
+			default:
+				return reject(new Error(errorMessage))
 			}
-			return reject(
-				new Error(
-					`xmllint exited with code ${code} when executed with ${command}:\n${output}`
-				)
-			)
 		})
 
 		// pipe input to process
@@ -44,40 +63,41 @@ const exec_xmllint = (input: string | Buffer, command: string): Promise<xmllint_
  * Validate XML without any DTD or schema.
  *
  * @param input XML
+ * @param output Print output to stdout, defaults to false
  */
-export const validateXML = (input: string | Buffer) =>
-	exec_xmllint(input, 'xmllint --nonet -')
+export const validateXML = (input: string | Buffer, output: Boolean = false) =>
+	exec_xmllint(input, `xmllint --nonet ${output ? '' : '--noout'} -`)
 
 /**
  * Validate XML with DTD.
  *
  * @param input XML
+ * @param output Print output to stdout, defaults to false
  */
-export const validateXMLWithDTD = (input: string | Buffer) =>
-	exec_xmllint(input, 'xmllint --valid --nonet -')
-
-/**
- * Save in W3C canonical format v1.0 (with comments)
- *
- * @param input XML
- */
-export const c14n = (input: string | Buffer) =>
-	exec_xmllint(input, 'xmllint --c14n -')
+export const validateXMLWithDTD = (input: string | Buffer, output: Boolean = false) =>
+	exec_xmllint(input, `xmllint --valid --nonet ${output ? '' : '--noout'} -`)
 
 /**
  * Save in W3C exclusive canonical format (with comments)
  *
  * @param input XML
+ * @param method Used canonicalization method, defaults to Exclusive C14N
+ * @param output Print output to stdout, defaults to false
  */
-export const exc_c14n = (input: string | Buffer) =>
-	exec_xmllint(input, 'xmllint --exc-c14n -')
+export const canonicalizeXML = (
+	input: string | Buffer, 
+	method: 'c14n' | 'c14n11' | 'exc-c14n' = 'exc-c14n',
+	output: Boolean = false
+) => exec_xmllint(input, `xmllint --${method} ${output ? '' : '--noout'} -`)
 
 /**
  * Validate XML with the provided XML schema file.
  * @param input XML
  * @param xsdfile Path to XSD
+ * @param output Print output to stdout, defaults to false
  */
 export const validateXMLWithXSD = (
 	input: string | Buffer,
-	xsdfile: string | Buffer
-) => exec_xmllint(input, `xmllint --schema ${xsdfile} --nonet -`)
+	xsdfile: string | Buffer,
+	output: Boolean = false
+) => exec_xmllint(input, `xmllint --schema ${xsdfile} --nonet ${output ? '' : '--noout'} -`)

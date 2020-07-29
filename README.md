@@ -2,7 +2,7 @@
 
 [![npm package][npm-badge]][npm]
 
-Wrapper for `xmllint`. Easy validation of XML. XML Schemas and DTDs supported. c14n and c14n-exc canoncalization.
+Wrapper for `xmllint`. Easy validation of XML. XML Schemas and DTDs supported. c14n, c14n11 and c14n-exc canoncalization.
 
 ### Zero dependencies.
 
@@ -10,10 +10,10 @@ Fork from project [validate-with-xmllint](https://github.com/aautio/validate-wit
 
 ## Features
 
-- Validate schemaless XML file 👉 `function validateXML(input: string | Buffer): Promise<xmllintOutput>`
-- Validate with DTDs 👉 `function validateXMLWithDTD(input: string | Buffer): Promise<xmllintOutput>`
-- Validate with XML Schemas (XSD) 👉 `function validateXMLWithXSD(input: string | Buffer, xsdfile: string | Buffer): Promise<void>`
-- Canonicalize XML with c14n 👉 `function exc_c14n(input: string | Buffer): Promise<xmllintOutput>`
+- Validate schemaless XML file 👉 `function validateXML(input: string | Buffer, output: Boolean = false): Promise<xmllintOutput>`
+- Validate with DTDs 👉 `function validateXMLWithDTD(input: string | Buffer, output: Boolean = false): Promise<xmllintOutput>`
+- Validate with XML Schemas (XSD) 👉 `function validateXMLWithXSD(input: string | Buffer, xsdfile: string | Buffer, output: Boolean = false): Promise<void>`
+- Canonicalize XML with c14n, c14n11 or exc-c14n 👉 `function canonicalizeXML(input: string | Buffer, method: 'c14n' | 'c14n11' | 'exc-c14n' = 'exc-c14n', output: Boolean = false): Promise<xmllintOutput>`
 - Written in TypeScript
 - Tests with good coverage included
 - Zero NPM dependencies
@@ -23,9 +23,9 @@ Fork from project [validate-with-xmllint](https://github.com/aautio/validate-wit
 
 The interface of the xmllintOutput format is
 ```
-  code: number,
-  command: string,
-  output: string
+  code: number,     // Returned status code
+  command: string,  // Used command
+  output: string    // Output data
 ```
 
 ## Usage
@@ -36,7 +36,8 @@ The interface of the xmllintOutput format is
 const {
   validateXML,
   validateXMLWithDTD,
-  validateXMLWithXSD
+  validateXMLWithXSD,
+  canonicalizeXML
 } = require("validate-with-xmllint");
 ```
 
