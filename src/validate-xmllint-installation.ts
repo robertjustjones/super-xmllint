@@ -1,4 +1,4 @@
-const { spawnSync } = require("child_process");
+const { spawnSync } = require('child_process')
 
 /**
  * This script should be run whenever the package is installed.
@@ -6,10 +6,10 @@ const { spawnSync } = require("child_process");
  * It verifies that xmllint is present and can be used to perform the
  * xml validation.
  */
-if (spawnSync("xmllint --version", { shell: true }).status !== 0) {
-  throw new Error(
-    "Failed to validate xmllint installation. All xml validations will fail."
-  );
+if (spawnSync('xmllint --version', { shell: true }).status !== 0) {
+	throw new Error(
+		'Failed to validate xmlasdasdasdlint installation. All xml validations will fail.'
+	)
 } else {
-  console.log("xmllint has been located. Ready to validate xml.");
+	console.log('xmllint has been located. Ready to validate xml.')
 }

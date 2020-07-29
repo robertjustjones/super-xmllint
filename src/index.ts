@@ -1,4 +1,4 @@
-import { spawn } from "child_process";
+import * as child_process from 'child_process'
 
 /**
  * xmllint should not write anything to stdout nor stderr when validating.
@@ -7,32 +7,38 @@ import { spawn } from "child_process";
  *
  * The exit code of xmllint informs us whether the xml was valid or not
  */
-const exec_xmllint = (input: string | Buffer, command: string): Promise<void> =>
-  new Promise((resolve, reject) => {
-    const xmllint = spawn(command, { shell: true });
+export interface xmllinto_output {
+  code: number,
+  command: string,
+  output: string
+}
 
-    // stdout and stderr are both captured to be made available if the promise rejects
-    let output = "";
-    xmllint.stdout.on("data", chunk => (output += chunk.toString()));
-    xmllint.stderr.on("data", chunk => (output += chunk.toString()));
+const exec_xmllint = (input: string | Buffer, command: string): Promise<xmllinto_output> =>
+	new Promise((resolve, reject) => {
+		const xmllint = child_process.spawn(command, { shell: true })
 
-    // Any errors cause a rejection
-    xmllint.on("error", reject);
+		// stdout and stderr are both captured to be made available if the promise rejects
+		let output = ''
+		xmllint.stdout.on('data', chunk => (output += chunk.toString()))
+		xmllint.stderr.on('data', chunk => (output += chunk.toString()))
 
-    xmllint.on("close", code => {
-      if (code === 0) {
-        return resolve();
-      }
-      return reject(
-        new Error(
-          `xmllint exited with code ${code} when executed with ${command}:\n${output}`
-        )
-      );
-    });
+		// Any errors cause a rejection
+		xmllint.on('error', reject)
 
-    // pipe input to process
-    xmllint.stdin.end(input);
-  });
+		xmllint.on('close', code => {
+			if (code === 0) {
+				return resolve({ code, command, output })
+			}
+			return reject(
+				new Error(
+					`xmllint exited with code ${code} when executed with ${command}:\n${output}`
+				)
+			)
+		})
+
+		// pipe input to process
+		xmllint.stdin.end(input)
+	})
 
 /**
  * Validate XML without any DTD or schema.
@@ -40,7 +46,7 @@ const exec_xmllint = (input: string | Buffer, command: string): Promise<void> =>
  * @param input XML
  */
 export const validateXML = (input: string | Buffer) =>
-  exec_xmllint(input, "xmllint --noout --nonet -");
+	exec_xmllint(input, 'xmllint --nonet -')
 
 /**
  * Validate XML with DTD.
@@ -48,7 +54,23 @@ export const validateXML = (input: string | Buffer) =>
  * @param input XML
  */
 export const validateXMLWithDTD = (input: string | Buffer) =>
-  exec_xmllint(input, "xmllint --valid --noout --nonet -");
+	exec_xmllint(input, 'xmllint --valid --nonet -')
+
+/**
+ * Save in W3C canonical format v1.0 (with comments)
+ *
+ * @param input XML
+ */
+export const c14n = (input: string | Buffer) =>
+	exec_xmllint(input, 'xmllint --c14n -')
+
+/**
+ * Save in W3C exclusive canonical format (with comments)
+ *
+ * @param input XML
+ */
+export const exc_c14n = (input: string | Buffer) =>
+	exec_xmllint(input, 'xmllint --exc-c14n -')
 
 /**
  * Validate XML with the provided XML schema file.
@@ -56,6 +78,6 @@ export const validateXMLWithDTD = (input: string | Buffer) =>
  * @param xsdfile Path to XSD
  */
 export const validateXMLWithXSD = (
-  input: string | Buffer,
-  xsdfile: string | Buffer
-) => exec_xmllint(input, `xmllint --schema ${xsdfile} --noout --nonet -`);
+	input: string | Buffer,
+	xsdfile: string | Buffer
+) => exec_xmllint(input, `xmllint --schema ${xsdfile} --nonet -`)

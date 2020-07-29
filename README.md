@@ -2,18 +2,27 @@
 
 [![npm package][npm-badge]][npm]
 
-Wrapper for `xmllint`. Easy validation of XML. XML Schemas and DTDs supported. Zero dependencies.
+Wrapper for `xmllint`. Easy validation of XML. XML Schemas and DTDs supported. c14n and c14n-exc canoncalization Zero dependencies.
 
 ## Features
 
-- Validate schemaless XML file 👉 `function validateXML(input: string | Buffer): Promise<void>`
-- Validate with DTDs 👉 `function validateXMLWithDTD(input: string | Buffer): Promise<void>`
+- Validate schemaless XML file 👉 `function validateXML(input: string | Buffer): Promise<xmllintOutput>`
+- Validate with DTDs 👉 `function validateXMLWithDTD(input: string | Buffer): Promise<xmllintOutput>`
 - Validate with XML Schemas (XSD) 👉 `function validateXMLWithXSD(input: string | Buffer, xsdfile: string | Buffer): Promise<void>`
+- Canonicalize XML with c14n 👉 `function exc_c14n(input: string | Buffer): Promise<xmllintOutput>`
 - Written in TypeScript
 - Tests with good coverage included
 - Zero NPM dependencies
 - Availability of `xmllint` is verified during installation time
 - No network connections used during validations
+
+
+The interface of the xmllintOutput format is
+```
+  code: number,
+  command: string,
+  output: string
+```
 
 ## Usage
 

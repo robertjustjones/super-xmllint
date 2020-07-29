@@ -1,7 +1,7 @@
 {
-  "name": "validate-with-xmllint",
-  "version": "1.1.1",
-  "description": "Wrapper for `xmllint`. Easy validation of XML. XML Schemas and DTDs supported. Zero dependencies.",
+  "name": "super-xmlllint",
+  "version": "1.0.0",
+  "description": "Wrapper for `xmllint`. Easy validation of XML. C14n and c14n-exc canoncalization. XML Schemas and DTDs supported. Zero dependencies.",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "files": [
@@ -12,13 +12,14 @@
     "build": "tsc",
     "watch": "tsc --watch",
     "test": "nyc mocha",
+    "lint": "eslint .",
     "postinstall": "node ./lib/validate-xmllint-installation.js"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/aautio/validate-with-xmllint"
+    "url": "https://github.com/JaanTaponen/validate-with-xmllint"
   },
-  "author": "Ari Autio <ari.autio@iki.fi>",
+  "author": "Jaan Taponen <jaan.taponen@aalto.fi>",
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^11.9.5",
@@ -26,7 +27,10 @@
     "chai-as-promised": "^7.1.1",
     "mocha": "^6.2.1",
     "nyc": "^14.1.1",
-    "typescript": "^3.3.3"
+    "typescript": "^3.7.5",
+    "eslint": "^6.8.0",
+    "@typescript-eslint/eslint-plugin": "^2.17.0",
+    "@typescript-eslint/parser": "^2.17.0"
   },
   "keywords": [
     "xml",
@@ -35,6 +39,9 @@
     "validation",
     "xmllint",
     "dtd",
-    "well-formed"
+    "well-formed",
+    "c14n",
+    "c14n-exc",
+    "canoncalization"
   ]
 }

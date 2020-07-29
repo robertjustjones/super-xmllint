@@ -5,8 +5,10 @@
     "declaration": true,
     "outDir": "./lib",
     "noImplicitAny": true,
-    "strict": true
+    "noImplicitReturns": true,
+    "strict": true,
   },
+
   "include": ["src"],
-  "exclude": ["node_modules", "**/__tests__/*"]
+  "exclude": ["node_modules", "**/__tests__/*", "lib"]
 }
