@@ -1,6 +1,6 @@
 {
   "name": "super-xmlllint",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "Wrapper for `xmllint`. Easy validation of XML. C14n and c14n-exc canoncalization. XML Schemas and DTDs supported. Zero dependencies.",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
@@ -17,7 +17,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/JaanTaponen/validate-with-xmllint"
+    "url": "https://github.com/JaanTaponen/super-xmllint"
   },
   "author": "Jaan Taponen <jaan.taponen@aalto.fi>",
   "license": "MIT",
