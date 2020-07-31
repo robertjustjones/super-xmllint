@@ -15,9 +15,21 @@ export interface xmllint_output {
   output: string
 }
 
-const exec_xmllint = (input: string | Buffer, command: string): Promise<xmllint_output> =>
-	new Promise((resolve, reject) => {
-		const xmllint = child_process.spawn(command, { shell: true })
+const exec_xmllint = async (input: string | Buffer, args: Array<string>): Promise<xmllint_output> =>
+	await new Promise((resolve, reject) => {
+		const xmllint = child_process.spawn('xmllint', ['--nonet'].concat(args))
+
+		// pipe input to process
+		xmllint.stdin.write(input)
+		xmllint.stdin.end()
+
+		xmllint.stdin.on('error', (error) => {
+			console.error(
+				'An error occurred in super-xmllint stdin, this was ' +
+				'probably caused by writing to a closed stream (EPIPE):\n' +
+				`Error message: ${error.message}\n`
+			)
+		})
 
 		// stdout and stderr are both captured to be made available if the promise rejects
 		let output = ''
@@ -25,15 +37,21 @@ const exec_xmllint = (input: string | Buffer, command: string): Promise<xmllint_
 		xmllint.stderr.on('data', chunk => (output += chunk.toString()))
 
 		// Any errors cause a rejection
-		xmllint.on('error', reject)
+		xmllint.on('error', error => {
+			reject(new Error(error.message))
+		})
+
+		xmllint.on('error', () => {
+			console.error('Failed to start subprocess.')
+		})
 
 		xmllint.on('close', code => {
 			/** See xmllint man page for more information about these codes */
-			const errorMessage = `xmllint exited with code ${code} when executed with ${command}:\n${output}`
+			const errorMessage = `xmllint exited with code ${code} when executed with ${args.toString()}:\n${output}`
 			
 			switch (code) {
 			case 0:
-				return resolve({ code, command, output })
+				return resolve({ code, command: args.toString(), output })
 			case 2:
 				return reject(new DTDError(errorMessage))
 			case 3:
@@ -54,9 +72,6 @@ const exec_xmllint = (input: string | Buffer, command: string): Promise<xmllint_
 				return reject(new Error(errorMessage))
 			}
 		})
-
-		// pipe input to process
-		xmllint.stdin.end(input)
 	})
 
 /**
@@ -65,7 +80,7 @@ const exec_xmllint = (input: string | Buffer, command: string): Promise<xmllint_
  * @param input XML
  */
 export const validateXML = (input: string | Buffer) =>
-	exec_xmllint(input, 'xmllint --nonet -')
+	exec_xmllint(input, ['-'])
 
 /**
  * Validate XML with DTD.
@@ -73,7 +88,7 @@ export const validateXML = (input: string | Buffer) =>
  * @param input XML
  */
 export const validateXMLWithDTD = (input: string | Buffer) =>
-	exec_xmllint(input, 'xmllint --valid --nonet -')
+	exec_xmllint(input, ['--valid', '-'])
 
 /**
  * Save in W3C exclusive canonical format (with comments)
@@ -84,7 +99,7 @@ export const validateXMLWithDTD = (input: string | Buffer) =>
 export const canonicalizeXML = (
 	input: string | Buffer, 
 	method: 'c14n' | 'c14n11' | 'exc-c14n' = 'exc-c14n'
-) => exec_xmllint(input, `xmllint --${method} --nonet -`)
+) => exec_xmllint(input, [`--${method}`, '-'])
 
 /**
  * Validate XML with the provided XML schema file.
@@ -94,4 +109,4 @@ export const canonicalizeXML = (
 export const validateXMLWithXSD = (
 	input: string | Buffer,
 	xsdfile: string | Buffer
-) => exec_xmllint(input, `xmllint --schema ${xsdfile} --nonet -`)
+) => exec_xmllint(input, ['--schema', `${xsdfile}`, '-'])
