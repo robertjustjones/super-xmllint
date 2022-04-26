@@ -1,6 +1,6 @@
 {
   "name": "super-xmlllint",
-  "version": "1.0.6",
+  "version": "1.0.6-html1",
   "description": "Wrapper for `xmllint`. Easy validation of XML. C14n and c14n-exc canoncalization. XML Schemas and DTDs supported. Zero dependencies.",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
